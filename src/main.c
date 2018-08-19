@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 
+#include "bot.h"
 #include "irc.h"
 #include "logging.h"
 #include "macros.h"
@@ -33,49 +34,50 @@ int main(void){
 
     DEBUG("main", "Starting bot");
 
-    Tox *tox = tox_init();
-    if (!tox) {
+    Bot *bot = bot_init();
+    if (!bot) {
         return 1;
     }
 
-    IRC *irc = irc_init(settings.server, settings.port);
-    if (!irc) {
-        tox_kill(tox);
+    bot_add_server(bot, settings.server, settings.port);
+
+    bot->tox = tox_init();
+    if (!bot->tox) {
         return 2;
     }
 
-    if (!irc_connect(irc)) {
-        irc_free(irc);
-        tox_kill(tox);
+    if (!irc_connect(bot->irc[0])) {
+        irc_free(bot->irc[0]);
+        tox_kill(bot->tox);
         return 3;
     }
 
-    irc_callbacks_setup(irc);
+    irc_callbacks_setup(bot->irc[0]);
 
     TOX_ERR_CONFERENCE_NEW err;
-    uint32_t group_num = tox_conference_new(tox, &err);
+    uint32_t group_num = tox_conference_new(bot->tox, &err);
     if (group_num == UINT32_MAX) {
         DEBUG("main", "Could not create groupchat for default group. Error number: %u", err);
-        tox_kill(tox);
-        irc_disconnect(irc);
-        irc_free(irc);
+        tox_kill(bot->tox);
+        irc_disconnect(bot->irc[0]);
+        irc_free(bot->irc[0]);
         return 4;
     }
 
-    tox_conference_set_title(tox, group_num, (const uint8_t *)settings.default_channel, strlen(settings.default_channel), NULL);
-    irc_join_channel(irc, settings.default_channel, group_num);
+    tox_conference_set_title(bot->tox, group_num, (const uint8_t *)settings.default_channel, strlen(settings.default_channel), NULL);
+    irc_join_channel(bot->irc[0], settings.default_channel, group_num);
 
     while (!exit_bot) {
-        irc_loop(irc, tox);
-        tox_iterate(tox, irc);
-        usleep(tox_iteration_interval(tox));
+        irc_loop(bot->irc[0], bot->tox);
+        tox_iterate(bot->tox, bot->irc[0]);
+        usleep(tox_iteration_interval(bot->tox));
     }
 
-    irc_disconnect(irc);
-    irc_free(irc);
+    irc_disconnect(bot->irc[0]);
+    irc_free(bot->irc[0]);
 
-    save_write(tox, SAVE_FILE);
-    tox_kill(tox);
+    save_write(bot->tox, SAVE_FILE);
+    tox_kill(bot->tox);
 
     settings_save(SETTINGS_FILE);
 
