@@ -13,9 +13,17 @@
 #include <stdarg.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <netdb.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <windows.h>
+#else
+    #include <sys/socket.h>
+    #include <sys/ioctl.h>
+    #include <netdb.h>
+#endif
+
 #include <unistd.h>
 
 IRC *irc_init(char *server, char *port) {
@@ -249,12 +257,29 @@ bool irc_in_channel(const IRC *irc, const char *channel) {
 void irc_loop(IRC *irc, void *userdata) {
     int count = 0;
 
-    ioctl(irc->sock, FIONREAD, &count);
+    
+    #ifdef _WIN32
+        ioctlsocket(irc->sock, FIONREAD, &count);
+    #else
+        ioctl(irc->sock, FIONREAD, &count);
+    #endif
+    
 
     if (count > 0) {
-        uint8_t data[count + 1];
+        #ifdef _WIN32
+            char data[count + 1];
+        #else
+            uint8_t data[count + 1];
+        #endif
+        
         data[count] = 0;
-        recv(irc->sock, data, count, MSG_NOSIGNAL);
+
+        #ifdef _WIN32
+            recv(irc->sock, data, count, 0); //@todo Possible problems here, This might need fixing
+        #else
+            recv(irc->sock, data, count, MSG_NOSIGNAL);
+        #endif
+
         printf("%s", data);
 
         if (strncmp((char *)data, "PING", 4) == 0) {

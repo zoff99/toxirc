@@ -4,8 +4,15 @@
 #define SETTINGS_FILE "settings.ini"
 
 #include <stdbool.h>
-#include <sys/socket.h>
-#include <netdb.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <windows.h>
+#else
+    #include <sys/socket.h>
+    #include <netdb.h>
+#endif
 
 #ifndef NI_MAXHOST
 #define NI_MAXHOST 1025
@@ -18,7 +25,7 @@
 enum prefix_index {
     CHAR_CMD_PREFIX,
     CHAR_NO_SYNC_PREFIX,
-    CHAR_MAX,
+    //CHAR_MAX, //@todo Possible problem here, this needs to be fixed properly
 };
 
 #define MAX_PREFIX 3
@@ -37,7 +44,7 @@ struct Settings {
     char              name[TOX_MAX_NAME_LENGTH];
     char              master[MASTER_KEY_SIZE + 1];
     bool              verbose;
-    SpecialCharacters characters[CHAR_MAX];
+    SpecialCharacters characters[1024]; //@todo Possible problem here, this needs to be fixed properly
 
     // Tox
     char status[TOX_MAX_STATUS_MESSAGE_LENGTH];

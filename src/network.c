@@ -5,7 +5,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/types.h>
-#include <sys/socket.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <windows.h>
+#else
+    #include <sys/socket.h>
+#endif
+
 
 int network_send(int sock, char *msg, int len) {
     if (sock < 0) {
@@ -16,7 +24,12 @@ int network_send(int sock, char *msg, int len) {
     int sent = 0, bytes = 0;
 
     while (sent < len) {
-        bytes = send(sock, msg + sent, len - sent, MSG_NOSIGNAL);
+        #ifdef _WIN32
+            bytes = send(sock, msg + sent, len - sent, 0);
+        #else
+            bytes = send(sock, msg + sent, len - sent, MSG_NOSIGNAL);
+        #endif
+        
         if (bytes <= 0) {
             DEBUG("IRC", "Problem sending data.");
             return -1;
