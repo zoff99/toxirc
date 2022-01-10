@@ -60,8 +60,16 @@ Tox *save_load(char *path, int *status) {
     #endif
 
     if (!fp) {
-        DEBUG("Save", "Could not open %s", path);
-        return NULL;
+        #ifdef _WIN32
+            DEBUG("Save", "Could not open/find tox save. Assuming new profile.", path); //@todo This needs to be properly addressed
+            fclose(fp);
+            tox     = tox_new(&options, NULL);
+            *status = 2;
+            return tox;
+        #else
+            DEBUG("Save", "Could not open %s", path);
+            return NULL;
+        #endif
     }
 
     off_t size = get_file_size(path);
