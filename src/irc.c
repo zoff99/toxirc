@@ -315,7 +315,7 @@ void irc_loop(IRC *irc, void *userdata) {
         }
     }
 
-    sleep(1); //@todo Remove this and make this function use polling or select
+    usleep(5000); //@todo Remove this and make this function use polling or select
 }
 
 irc_message *irc_parse_message(char *buffer) {
