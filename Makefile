@@ -1,12 +1,12 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=gnu99 $(shell pkg-config --cflags toxcore) #TODO: switch to c99
-LDFLAGS = $(shell pkg-config --libs toxcore)
+CC = x86_64-w64-mingw32-gcc
+CFLAGS = -Wall -Wextra -std=gnu99 $(wildcard /tmp/static_prefix/lib/*.a)
+LDFLAGS = $(wildcard /tmp/static_prefix/lib/*.a)
 
 SRC = $(wildcard src/*.c ) $(wildcard src/*/*.c) third-party/minini/dev/minIni.c
 OBJ = $(SRC:.c=.o)
 HEADERS = $(wildcard src/*.h) $(wildcard src/*/*.h)
 
-DEBUG = 1
+DEBUG = 0
 PREFIX = /usr/local
 EXECUTABLE = toxirc
 
@@ -14,10 +14,12 @@ ifeq ($(DEBUG), 1)
 	CFLAGS += -g
 endif
 
+CFLAGS += -I /tmp/static_prefix/include -D__USE_MINGW_ANSI_STDIO=1
+
 all: $(SRC) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ) $(HEADERS)
-	$(CC) $(OBJ) $(LDFLAGS) -o $(EXECUTABLE)
+	$(CC) $(OBJ) $(LDFLAGS) -o $(EXECUTABLE) -lwsock32 -lws2_32 -lpthread -lssp -static-libgcc -liphlpapi -L /root/prefix/x86_64/lib -lsodium
 
 .o:
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -149,7 +149,7 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
             const size_t buffer_size = name_len + message_size + 3;
             char         buffer[buffer_size];
 
-            snprintf(buffer, buffer_size, "<%s> %s", name, message_line);
+            snprintf(buffer, buffer_size, "%s", message_line);
 
             irc_send_message(irc, channel, buffer);
 

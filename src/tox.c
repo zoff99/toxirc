@@ -71,7 +71,7 @@ bool tox_connect(Tox *tox) {
 
 void tox_group_send_msg(Tox *tox, uint32_t group_num, char *nick, char *msg) {
     char   message[TOX_MAX_MESSAGE_LENGTH];
-    size_t length = snprintf(message, sizeof(message), "<%s> %s", nick, msg);
+    size_t length = snprintf(message, sizeof(message), "*<%s>* - %s", nick, msg);
     tox_conference_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)message, length, NULL);
 }
 

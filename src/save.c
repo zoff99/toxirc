@@ -49,6 +49,10 @@ Tox *save_load(char *path, int *status) {
     tox_options_default(&options);
 
     tox_options_set_udp_enabled(&options, settings.udp);
+    if (settings.udp == true) {
+        tox_options_set_start_port(&options, 33620);
+        tox_options_set_end_port(&options, 33660);
+    }
     tox_options_set_ipv6_enabled(&options, settings.ipv6);
 
     #ifdef _WIN32

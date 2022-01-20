@@ -18,6 +18,7 @@
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <windows.h>
+    #define WIN32_LEAN_AND_MEAN
 #else
     #include <sys/socket.h>
     #include <sys/ioctl.h>
@@ -315,7 +316,7 @@ void irc_loop(IRC *irc, void *userdata) {
         }
     }
 
-    usleep(5000); //@todo Remove this and make this function use polling or select
+    usleep(2000); //@todo Remove this and make this function use polling or select
 }
 
 irc_message *irc_parse_message(char *buffer) {

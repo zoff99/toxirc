@@ -20,15 +20,34 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
 
     irc_message *message = irc_parse_message(buffer);
     if (!message) {
-        DEBUG("IRC Callbacks", "Could not parse message");
+        //DEBUG("IRC Callbacks", "Could not parse message");
         return;
     }
+
 
     if (message->type == IRC_MESSGAE_PRIVMSG) {
         char *nosync_prefix = settings_get_prefix(CHAR_NO_SYNC_PREFIX);
         if (command_prefix_cmp(message->message, nosync_prefix)) { // dont sync messages that begin with ~
             free(message);
             return;
+        }
+
+        if( (strstr(message->channel, irc->nick) != NULL)
+            && (strstr(message->nick, "alis") == NULL)
+            && (strstr(message->nick, "ChanServ") == NULL)
+            && (strstr(message->nick, "MemoServ") == NULL)
+            && (strstr(message->nick, "NickServ") == NULL)
+            && (strstr(message->nick, "OperServ") == NULL)
+            && (strstr(message->nick, "ProjectServ") == NULL)
+            && (strstr(message->nick, "SaslServ") == NULL)
+            && (strstr(message->nick, "CatServ") == NULL)
+            ) {
+            char nbuffer[166];
+            snprintf(nbuffer, sizeof(nbuffer), "This is a Tox to IRC bridge. Please do email(irc@plastiras.org) or add me on Tox instead: F0AA7C8C55552E8593B2B77AC6FCA598A40D1F5F52A26C2322690A4BF1DFCB0DD8AEDD2822FF");
+
+            irc_send_message(irc, message->nick, nbuffer);
+
+            DEBUG("IRC Direct Message", "Replying to: %s", message->nick);
         }
 
         char *cmd_prefix = settings_get_prefix(CHAR_CMD_PREFIX);
