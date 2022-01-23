@@ -18,6 +18,7 @@
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <windows.h>
+    #include <errno.h>
     #define WIN32_LEAN_AND_MEAN
 #else
     #include <sys/socket.h>
@@ -255,9 +256,11 @@ bool irc_in_channel(const IRC *irc, const char *channel) {
     return false;
 }
 
-void irc_loop(IRC *irc, void *userdata) {
-    int count = 0;
+int timer_intv = 0;  
 
+void irc_loop(IRC *irc, void *userdata) {
+    u_long count = 0;
+    timer_intv++;
     
     #ifdef _WIN32
         ioctlsocket(irc->sock, FIONREAD, &count);
@@ -281,12 +284,12 @@ void irc_loop(IRC *irc, void *userdata) {
             recv(irc->sock, data, count, MSG_NOSIGNAL);
         #endif
 
-        printf("%s", data);
+        //printf("%s", data);
 
         if (strncmp((char *)data, "PING", 4) == 0) {
             data[1] = 'O';
 
-            int i;
+            u_long i;
             for (i = 0; i < count; ++i) {
                 if (data[i] == '\n') {
                     ++i;
@@ -305,9 +308,10 @@ void irc_loop(IRC *irc, void *userdata) {
             irc->message_callback(irc, (char *)data, userdata);
         }
 
-        int       error = 0;
-        socklen_t len   = sizeof(error);
-        if (irc->sock < 0 || getsockopt(irc->sock, SOL_SOCKET, SO_ERROR, &error, &len) != 0) {
+        int error;
+        socklen_t len = sizeof(error);
+        int sockoptval = getsockopt(irc->sock, SOL_SOCKET, SO_ERROR, &error, &len);
+        if (irc->sock < 0 || sockoptval != 0 || error != 0) {
             DEBUG("main", "Socket has gone bad. Error: %d. Reconnecting...", error);
             if (irc_reconnect(irc)) {
                 DEBUG("main", "Unable to reconnect. Dying...");
@@ -316,7 +320,22 @@ void irc_loop(IRC *irc, void *userdata) {
         }
     }
 
-    usleep(2000); //@todo Remove this and make this function use polling or select
+    if (timer_intv > 80000) {
+        timer_intv = 0;
+
+        char *msg = "PING 1\n";
+        int msg_len = strlen(msg);
+        int result = network_send(irc->sock, (char *)msg, msg_len);
+        //printf("Pinging server");
+        if (result == -1) {
+            if (irc_reconnect(irc)) {
+                DEBUG("main", "Unable to PING server, reconnecting...");
+            }
+        }
+
+    }
+
+    usleep(2000);
 }
 
 irc_message *irc_parse_message(char *buffer) {

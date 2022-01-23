@@ -42,8 +42,8 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             && (strstr(message->nick, "SaslServ") == NULL)
             && (strstr(message->nick, "CatServ") == NULL)
             ) {
-            char nbuffer[166];
-            snprintf(nbuffer, sizeof(nbuffer), "This is a Tox to IRC bridge. Please do email(irc@plastiras.org) or add me on Tox instead: F0AA7C8C55552E8593B2B77AC6FCA598A40D1F5F52A26C2322690A4BF1DFCB0DD8AEDD2822FF");
+            char nbuffer[176];
+            snprintf(nbuffer, sizeof(nbuffer), "This is my personal Tox to IRC bridge. Please do email(irc@plastiras.org) or add me on Tox instead: F0AA7C8C55552E8593B2B77AC6FCA598A40D1F5F52A26C2322690A4BF1DFCB0DD8AEDD2822FF");
 
             irc_send_message(irc, message->nick, nbuffer);
 
@@ -90,7 +90,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
         tox_group_send_msg(tox, group, message->nick, message->message);
         free(message);
     } else {
-        DEBUG("IRC Callbacks", "Recieved reply with code: %d for channel: %s", message->code, message->channel);
+        DEBUG("IRC Callbacks", "Received reply with code: %d for channel: %s", message->code, message->channel);
 
         if (message->code == 403) { // channel doesn't exist
             uint32_t index = irc_get_channel_index(irc, message->channel);
