@@ -308,7 +308,7 @@ void irc_loop(IRC *irc, void *userdata) {
             irc->message_callback(irc, (char *)data, userdata);
         }
 
-        int error;
+        char error;
         socklen_t len = sizeof(error);
         int sockoptval = getsockopt(irc->sock, SOL_SOCKET, SO_ERROR, &error, &len);
         if (irc->sock < 0 || sockoptval != 0 || error != 0) {

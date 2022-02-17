@@ -19,7 +19,7 @@ CFLAGS += -I /tmp/static_prefix/include -D__USE_MINGW_ANSI_STDIO=1
 all: $(SRC) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ) $(HEADERS)
-	$(CC) $(OBJ) $(LDFLAGS) -o $(EXECUTABLE) -lwsock32 -lws2_32 -lpthread -lssp -static-libgcc -liphlpapi -L /root/prefix/x86_64/lib -lsodium
+	$(CC) $(OBJ) $(LDFLAGS) -o $(EXECUTABLE) -lwsock32 -lws2_32 -lpthread -static-libgcc -liphlpapi -L /root/prefix/x86_64/lib -lsodium -lssp
 
 .o:
 	$(CC) $(CFLAGS) -c $< -o $@
