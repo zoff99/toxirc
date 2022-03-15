@@ -54,6 +54,8 @@ Tox *save_load(char *path, int *status) {
         tox_options_set_end_port(&options, 33660);
     }
     tox_options_set_ipv6_enabled(&options, settings.ipv6);
+    tox_options_set_local_discovery_enabled(&options, false);
+    tox_options_set_udp_enabled(&options, false);
 
     #ifdef _WIN32
         FILE *fp = fopen(path, "rb");

@@ -42,12 +42,14 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             && (strstr(message->nick, "SaslServ") == NULL)
             && (strstr(message->nick, "CatServ") == NULL)
             ) {
+                /*
             char nbuffer[176];
             snprintf(nbuffer, sizeof(nbuffer), "This is my personal Tox to IRC bridge. Please do email(irc@plastiras.org) or add me on Tox instead: F0AA7C8C55552E8593B2B77AC6FCA598A40D1F5F52A26C2322690A4BF1DFCB0DD8AEDD2822FF");
 
             irc_send_message(irc, message->nick, nbuffer);
 
             DEBUG("IRC Direct Message", "Replying to: %s", message->nick);
+            */
         }
 
         char *cmd_prefix = settings_get_prefix(CHAR_CMD_PREFIX);
@@ -102,7 +104,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             }
 
             DEBUG("IRC Callbacks", "Channel does not exist leaving...");
-            tox_conference_delete(tox, irc->channels[index].group_num, NULL);
+            //tox_conference_delete(tox, irc->channels[index].group_num, NULL);
             irc_delete_channel(irc, index); // only delete the channel, we don't need to leave since we never joined
 
             save_write(tox, SAVE_FILE);

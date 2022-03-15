@@ -8,18 +8,18 @@
 #include <stdio.h>
 #include <string.h>
 
-static bool command_users(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_topic(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_characters(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_users(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_topic(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_characters(Tox *tox, IRC *irc, uint32_t index, char *arg);
 
 // clang-format off
 // TODO: when new groupchats are merged add in a command for getting the groupchats id
 struct Command irc_commands[MAX_CMDS] = {
-    { "users",      " Retrieve the users in the tox groupchat",                            false, command_users      },
-    { "topic",      "Gets the topic for the groupchat this channel is being synced with.", false, command_topic      },
-    { "characters", "Gives information about all the special characters",                  false, command_characters },
-    { "help",       "This message.",                                                       false, command_help       },
+    //{ "users",      " Retrieve the users in the tox groupchat",                            false, command_users      },
+    //{ "topic",      "Gets the topic for the groupchat this channel is being synced with.", false, command_topic      },
+    //{ "characters", "Gives information about all the special characters",                  false, command_characters },
+    //{ "help",       "This message.",                                                       false, command_help       },
     { NULL,         NULL,                                                                  false, NULL               },
 };
 // clang-format on
@@ -61,10 +61,10 @@ static bool command_users(Tox *tox, IRC *irc, uint32_t index, char *UNUSED(arg))
 
 static bool command_topic(Tox *tox, IRC *irc, uint32_t index, char *UNUSED(arg)) {
     uint32_t group_num  = irc->channels[index].group_num;
-    size_t   topic_size = tox_conference_get_title_size(tox, group_num, NULL);
+    size_t   topic_size = tox_group_get_topic_size(tox, group_num, NULL);
 
     uint8_t topic[topic_size];
-    tox_conference_get_title(tox, group_num, topic, NULL);
+    tox_group_get_topic(tox, group_num, topic, NULL);
     topic[topic_size] = '\0';
     topic_size++;
 

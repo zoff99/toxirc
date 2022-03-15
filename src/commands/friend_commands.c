@@ -14,33 +14,33 @@
 #include "../save.h"
 
 static bool command_invite(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_leave(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_leave(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_list(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_id(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_info(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_la(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_la(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_name(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_default(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_master(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_default(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_master(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_warn(Tox *tox, IRC *irc, uint32_t fid, char *arg);
-static bool command_limit(Tox *tox, IRC *irc, uint32_t fid, char *arg);
+//static bool command_limit(Tox *tox, IRC *irc, uint32_t fid, char *arg);
 
 // clang-format off
 struct Command friend_commands[MAX_CMDS] = {
     { "invite",  "invite #channelname to get invited to a channel the bot has joined.",   false, command_invite  },
-    { "join",    "join #channelname to join a specific channel.",                         false, command_join    },
-    { "leave",   "leave #channelname to leave a specific channel.",                       true,  command_leave   },
+    //{ "join",    "join #channelname to join a specific channel.",                         false, command_join    },
+    //{ "leave",   "leave #channelname to leave a specific channel.",                       true,  command_leave   },
     { "list",    "Shows all channels the bot has joined.",                                false, command_list    },
     { "id",      "Displays this bot's tox ID.",                                           false, command_id      },
     { "info",    "Shows additional info about this bot.",                                 false, command_info    },
-    { "la",      "Forces this bot to leave all channels",                                 true,  command_la      },
+    //{ "la",      "Forces this bot to leave all channels",                                 true,  command_la      },
     { "name",    "Set this bot's name",                                                   true,  command_name    },
-    { "default", "default #channelname sets the default channel for invite.",             true,  command_default },
-    { "master",  "Add a ToxID to set the bot's owner.",                                   true,  command_master  },
+    //{ "default", "default #channelname sets the default channel for invite.",             true,  command_default },
+    //{ "master",  "Add a ToxID to set the bot's owner.",                                   true,  command_master  },
     { "warn",    "Warn all channels and groupchats the bot is going down.",               true,  command_warn    },
-    { "limit",   "Limit the number of channels the bot can join.",                        true,  command_limit   },
+    //{ "limit",   "Limit the number of channels the bot can join.",                        true,  command_limit   },
     { "help",    "Displays this list of commands.",                                       false, command_help    },
     { NULL,      NULL,                                                                    false, NULL            },
 };
@@ -286,7 +286,7 @@ static bool command_warn(Tox *tox, IRC *irc, uint32_t fid, char *UNUSED(arg)) {
 
     for (uint32_t i = 0; i < irc->num_channels; i++) {
         irc_send_message(irc, irc->channels[i].name, warning);
-        tox_conference_send_message(tox, irc->channels[i].group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)warning,
+        tox_group_send_message(tox, irc->channels[i].group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)warning,
                                     length, NULL);
     }
 
