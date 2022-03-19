@@ -105,7 +105,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
 
             DEBUG("IRC Callbacks", "Channel does not exist leaving...");
             //tox_conference_delete(tox, irc->channels[index].group_num, NULL);
-            irc_delete_channel(irc, index); // only delete the channel, we don't need to leave since we never joined
+            //irc_delete_channel(irc, index); // only delete the channel, we don't need to leave since we never joined
 
             save_write(tox, SAVE_FILE);
         }

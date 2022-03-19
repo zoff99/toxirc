@@ -145,7 +145,7 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
         DEBUG("Tox", "Could not get channel name, unable to send message for group: %u.", groupnumber);
         return;
     }
-    */
+*/
 
     int next_character = 0;
     for (unsigned int i = 0; i < length; i++) {
@@ -162,7 +162,7 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
 
             snprintf(buffer, buffer_size, "<%s> - %s", name, message_line);
 
-            irc_send_message(irc, "#toktok", buffer);
+            irc_send_message(irc, settings.default_channel, buffer);
 
             next_character = i + 1;
 
@@ -184,68 +184,6 @@ static void friend_request_callback(Tox *tox, const uint8_t *public_key, const u
     save_write(tox, SAVE_FILE);
 }
 
-static void add_master_as_friend(Tox *tox){
-
-    uint8_t *friend_id = hex_string_to_bin(settings.master);
-
-        size_t nick_len = tox_self_get_name_size(tox);
-		char self_nick[TOX_MAX_NAME_LENGTH + 1];
-		tox_self_get_name(tox, (uint8_t *) self_nick);
-		self_nick[nick_len] = '\0';
-
-
-	const char *errmsg;
-
-    Tox_Err_Friend_Add err;
-    uint32_t f_num = tox_friend_add(tox, (const uint8_t *) friend_id, (const uint8_t *) self_nick, nick_len, &err);
-
-    switch (err) {
-        case TOX_ERR_FRIEND_ADD_TOO_LONG:
-            errmsg = "Message is too long.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
-            errmsg = "Please add a message to your request.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_OWN_KEY:
-            errmsg = "That appears to be your own ID.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
-            errmsg = "Friend request has already been sent.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
-            errmsg = "Bad checksum in address.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
-            errmsg = "Nospam was different.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_MALLOC:
-            errmsg = "Core memory allocation failed.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_OK:
-            errmsg = "Friend request sent.";
-            break;
-
-        case TOX_ERR_FRIEND_ADD_NULL:
-
-        default:
-            errmsg = "Failed to add friend: Unknown error.";
-            break;
-    }
-    
-    printf(errmsg);
-    printf("\n");
-
-	free(friend_id);
-    
-}
-
 static void self_connection_change_callback(Tox *tox, TOX_CONNECTION status, void *UNUSED(userdata)) {
     switch (status) {
         case TOX_CONNECTION_NONE:
@@ -253,11 +191,9 @@ static void self_connection_change_callback(Tox *tox, TOX_CONNECTION status, voi
             break;
         case TOX_CONNECTION_TCP:
             DEBUG("Tox", "Connected using TCP.");
-            add_master_as_friend(tox);
             break;
         case TOX_CONNECTION_UDP:
             DEBUG("Tox", "Connected using UDP.");
-            add_master_as_friend(tox);
             break;
     }
 }

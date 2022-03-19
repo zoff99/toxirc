@@ -13,8 +13,8 @@
 #include "../utils.h"
 #include "../save.h"
 
-static bool command_invite(Tox *tox, IRC *irc, uint32_t index, char *arg);
-//static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_invite(Tox *tox, IRC *irc, uint32_t index, char *arg);
+static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
 //static bool command_leave(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_list(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_id(Tox *tox, IRC *irc, uint32_t index, char *arg);
@@ -29,8 +29,8 @@ static bool command_warn(Tox *tox, IRC *irc, uint32_t fid, char *arg);
 
 // clang-format off
 struct Command friend_commands[MAX_CMDS] = {
-    { "invite",  "invite #channelname to get invited to a channel the bot has joined.",   false, command_invite  },
-    //{ "join",    "join #channelname to join a specific channel.",                         false, command_join    },
+    //{ "invite",  "invite #channelname to get invited to a channel the bot has joined.",   false, command_invite  },
+    { "join",    "join #channelname to join a specific channel.",                         false, command_join    },
     //{ "leave",   "leave #channelname to leave a specific channel.",                       true,  command_leave   },
     { "list",    "Shows all channels the bot has joined.",                                false, command_list    },
     { "id",      "Displays this bot's tox ID.",                                           false, command_id      },
@@ -65,7 +65,7 @@ static bool command_invite(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
 }
 
 static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
-    if (!arg) {
+    /* if (!arg) {
         tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"An argument is required.",
                                 sizeof("An argument is required.") - 1, NULL);
         return false;
@@ -88,8 +88,33 @@ static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
         tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"I am already in that channel.",
                                 sizeof("I am already in that channel.") - 1, NULL);
         return false;
-    }
+    } */
 
+    uint32_t num_groups = tox_group_get_number_groups(tox);
+
+    uint32_t groups[num_groups];
+
+    for (uint32_t i = 0; i < num_groups; i++) {
+            tox_group_leave(tox, groups[i], (const uint8_t *) " ", 1, NULL);
+        }
+
+    size_t nick_len = tox_self_get_name_size(tox);
+    char self_nick[TOX_MAX_NAME_LENGTH + 1];
+    tox_self_get_name(tox, (uint8_t *) self_nick);
+    self_nick[nick_len] = '\0'; 
+
+    Tox_Err_Group_Join err;
+    uint8_t *id_bin = hex_string_to_bin("4B61BB3CF3F505BD6D9650452130D4AE4802CB82BCA8D75526A82DEA29C7FA17");
+    uint32_t group_num = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, &err);
+    if (group_num == UINT32_MAX) {
+        DEBUG("main", "Could not create groupchat for default group. Error number: %u", err);
+    }
+    free(id_bin);
+
+    irc_join_channel(irc, settings.default_channel, group_num);
+    tox_group_invite_friend(tox, group_num, fid, NULL);
+    
+/* 
     TOX_ERR_CONFERENCE_NEW err;
     uint32_t               group_num = tox_conference_new(tox, &err);
     if (group_num == UINT32_MAX) {
@@ -101,6 +126,8 @@ static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
 
     tox_conference_set_title(tox, group_num, (uint8_t *)arg, strlen(arg), NULL);
     tox_conference_invite(tox, fid, group_num, NULL);
+    */
+    
 
     save_write(tox, SAVE_FILE);
 

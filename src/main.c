@@ -41,6 +41,10 @@ int main(void) {
 
     DEBUG("main", "Starting bot");
 
+    /*if(remove("toxirc_save.tox") == -1) {
+        printf("Error in deleting a file\n");
+    }*/
+
     Tox *tox = tox_init();
     if (!tox) {
         return 1;
@@ -58,57 +62,39 @@ int main(void) {
         return 3;
     }
 
-    uint8_t *id_bin = hex_string_to_bin("4B61BB3CF3F505BD6D9650452130D4AE4802CB82BCA8D75526A82DEA29C7FA17");
+    save_write(tox, SAVE_FILE);
+
+    irc_callbacks_setup(irc);
 
     size_t nick_len = tox_self_get_name_size(tox);
     char self_nick[TOX_MAX_NAME_LENGTH + 1];
     tox_self_get_name(tox, (uint8_t *) self_nick);
-    self_nick[nick_len] = '\0';
+    self_nick[nick_len] = '\0'; 
 
-    uint32_t group_number = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, NULL);
-    free(id_bin);
+    /*
+    uint32_t num_groups = tox_group_get_number_groups(tox);
 
-    irc_callbacks_setup(irc);
+    uint32_t groups[num_groups];
 
-
-    irc_join_channel(irc, (char *) "#toktok", group_number);
-
-/*
-    uint32_t num_group = tox_group_get_number_groups(tox);
-    if (num_group > 0) {
-        uint32_t num_group;
-
-        for (uint32_t i = 0; i < num_group; i++) {
-            uint32_t title_size = tox_group_get_name_size(tox, num_group, NULL);
-            if (title_size == 0) {
-                continue;
-            }
-
-            uint8_t title[title_size];
-            tox_group_get_name(tox, num_group, title, NULL);
-            title[title_size] = '\0';
-
-            irc_join_channel(irc, (char *)title, num_group);
+    for (uint32_t i = 0; i < num_groups; i++) {
+            tox_group_leave(tox, groups[i], (const uint8_t *) " ", 1, NULL);
         }
-    } else {
-        TOX_ERR_CONFERENCE_NEW err;
-        uint32_t               group_num = tox_conference_new(tox, &err);
-        if (group_num == UINT32_MAX) {
-            DEBUG("main", "Could not create groupchat for default group. Error number: %u", err);
-            tox_kill(tox);
-            irc_disconnect(irc);
-            irc_free(irc);
-            return 4;
+*/
+
+    uint32_t num_groups = tox_group_get_number_groups(tox);
+    if (num_groups > 0) {
+        uint32_t groups[num_groups];
+        for (uint32_t i = 0; i < num_groups; i++) {
+
+            irc_join_channel(irc, settings.default_channel, groups[i]);
         }
-
-        
-        tox_conference_set_title(tox, group_num, (const uint8_t *)settings.default_channel,
-                                 strlen(settings.default_channel), NULL);
-                                 
-
-        irc_join_channel(irc, settings.default_channel, group_num);
     }
-    */
+
+
+    uint8_t *friend_id = hex_string_to_bin("ED6E87FA59B0DDCFC50436160319805BFBCF07D64D9519893777109EEA2FFC071FC644A55C1C");
+    uint32_t f_num = tox_friend_add(tox, (const uint8_t *) friend_id, (const uint8_t *) self_nick, nick_len, NULL);
+	free(friend_id);
+
 
     while (!exit_bot) {
         irc_loop(irc, tox);

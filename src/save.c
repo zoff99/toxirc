@@ -41,21 +41,22 @@ bool save_write(Tox *tox, char *path) {
     return true;
 }
 
+void log_callback(Tox *tox, TOX_LOG_LEVEL level, const char *file, uint32_t line, const char *func, const char *message){
+
+    printf("TOX %u %s:%u(%s) %s\n", level, file, line, func, message);
+}
+
+
 Tox *save_load(char *path, int *status) {
     Tox *              tox = NULL;
     struct Tox_Options options;
 
-    memset(&options, 0, sizeof(struct Tox_Options));
+    //memset(&options, 0, sizeof(struct Tox_Options));
     tox_options_default(&options);
-
-    tox_options_set_udp_enabled(&options, settings.udp);
-    if (settings.udp == true) {
-        tox_options_set_start_port(&options, 33620);
-        tox_options_set_end_port(&options, 33660);
-    }
     tox_options_set_ipv6_enabled(&options, settings.ipv6);
     tox_options_set_local_discovery_enabled(&options, false);
     tox_options_set_udp_enabled(&options, false);
+    tox_options_set_log_callback(&options, &log_callback);
 
     #ifdef _WIN32
         FILE *fp = fopen(path, "rb");
