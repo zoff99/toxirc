@@ -99,7 +99,6 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             if (index == UINT32_MAX) {
                 DEBUG("IRC Callbacks", "Got message for channel: %s but we have no record of being in it.",
                       message->channel);
-                free(message);
                 return;
             }
 
@@ -110,6 +109,8 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             save_write(tox, SAVE_FILE);
         }
     }
+
+    free(message);
 }
 
 void irc_callbacks_setup(IRC *irc) {
