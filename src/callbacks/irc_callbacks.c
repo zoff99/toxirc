@@ -108,6 +108,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             save_write(tox, SAVE_FILE);
         }
     }
+    free(message);
 }
 
 void irc_callbacks_setup(IRC *irc) {
