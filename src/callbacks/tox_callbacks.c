@@ -61,7 +61,7 @@ static void friend_message_callback(Tox *tox, uint32_t fid, TOX_MESSAGE_TYPE typ
     }
 }
 
-static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer_number, TOX_MESSAGE_TYPE UNUSED(type),
+static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer_number, TOX_MESSAGE_TYPE type,
                                    const uint8_t *message, size_t length, void *userdata) {
 
     if (tox_conference_peer_number_is_ours(tox, groupnumber, peer_number, NULL)) {
@@ -145,13 +145,24 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
             strncpy(message_line, msg + next_character, message_size);
             message_line[message_size] = '\0';
             message_size++;
+            if (type == TOX_MESSAGE_TYPE_ACTION) {
+                const size_t buffer_size = name_len + message_size + 3;
+                char         buffer[buffer_size];
 
-            const size_t buffer_size = name_len + message_size + 3;
-            char         buffer[buffer_size];
+                snprintf(buffer, buffer_size, "%s", message_line);
 
-            snprintf(buffer, buffer_size, "%s", message_line);
+                irc_send_action_message(irc, channel, buffer);
 
-            irc_send_message(irc, channel, buffer);
+            } else {
+
+                const size_t buffer_size = name_len + message_size + 3;
+                char         buffer[buffer_size];
+
+                snprintf(buffer, buffer_size, "%s", message_line);
+
+                irc_send_message(irc, channel, buffer);
+
+            }
 
             next_character = i + 1;
 

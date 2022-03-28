@@ -8,18 +8,18 @@
 #include <stdio.h>
 #include <string.h>
 
-static bool command_users(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_topic(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_characters(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_users(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_topic(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_characters(Tox *tox, IRC *irc, uint32_t index, char *arg);
 
 // clang-format off
 // TODO: when new groupchats are merged add in a command for getting the groupchats id
 struct Command irc_commands[MAX_CMDS] = {
-    { "users",      " Retrieve the users in the tox groupchat",                            false, command_users      },
-    { "topic",      "Gets the topic for the groupchat this channel is being synced with.", false, command_topic      },
-    { "characters", "Gives information about all the special characters",                  false, command_characters },
-    { "help",       "This message.",                                                       false, command_help       },
+    //{ "users",      " Retrieve the users in the tox groupchat",                            false, command_users      },
+    //{ "topic",      "Gets the topic for the groupchat this channel is being synced with.", false, command_topic      },
+    //{ "characters", "Gives information about all the special characters",                  false, command_characters },
+    //{ "help",       "This message.",                                                       false, command_help       },
     { NULL,         NULL,                                                                  false, NULL               },
 };
 // clang-format on
