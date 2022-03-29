@@ -82,6 +82,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
 
             return; // dont sync commands
         }
+        
 
         uint32_t group = irc_get_channel_group(irc, message->channel);
         if (group == UINT32_MAX) {
@@ -90,7 +91,6 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
         }
 
         tox_group_send_msg(tox, group, message->nick, message->message);
-        free(message);
     } else {
         DEBUG("IRC Callbacks", "Received reply with code: %d for channel: %s", message->code, message->channel);
 
@@ -99,6 +99,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             if (index == UINT32_MAX) {
                 DEBUG("IRC Callbacks", "Got message for channel: %s but we have no record of being in it.",
                       message->channel);
+                free(message);
                 return;
             }
 
