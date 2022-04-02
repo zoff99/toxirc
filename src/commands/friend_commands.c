@@ -104,7 +104,7 @@ static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
     self_nick[nick_len] = '\0'; 
 
     Tox_Err_Group_Join err;
-    uint8_t *id_bin = hex_string_to_bin("4B61BB3CF3F505BD6D9650452130D4AE4802CB82BCA8D75526A82DEA29C7FA17");
+    uint8_t *id_bin = hex_string_to_bin("4EACCA789FE78054E7EF28D6866771819D0849E6B9BEC4253E876903A4868236");
     uint32_t group_num = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, &err);
     if (group_num == UINT32_MAX) {
         DEBUG("main", "Could not create groupchat for default group. Error number: %u", err);
