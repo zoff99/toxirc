@@ -103,11 +103,10 @@ static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
     tox_self_get_name(tox, (uint8_t *) self_nick);
     self_nick[nick_len] = '\0'; 
 
-    Tox_Err_Group_Join err;
     uint8_t *id_bin = hex_string_to_bin("4EACCA789FE78054E7EF28D6866771819D0849E6B9BEC4253E876903A4868236");
-    uint32_t group_num = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, &err);
+    uint32_t group_num = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, NULL);
     if (group_num == UINT32_MAX) {
-        DEBUG("main", "Could not create groupchat for default group. Error number: %u", err);
+        DEBUG("main", "Could not create groupchat for default group.");
     }
     free(id_bin);
 
