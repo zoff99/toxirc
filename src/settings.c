@@ -6,6 +6,7 @@
 
 #include "../third-party/minini/dev/minIni.h"
 
+#include <limits.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>

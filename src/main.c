@@ -21,7 +21,7 @@
 #include "save.h"
 #include "settings.h"
 #include "tox.h"
-#include "../../testing/misc_tools.h"
+#include "utils.h"
 
 #include "callbacks/irc_callbacks.h"
 
@@ -81,20 +81,18 @@ int main(void) {
         }
 */
 
-    uint32_t num_groups = tox_group_get_number_groups(tox);
-    if (num_groups > 0) {
-        uint32_t groups[num_groups];
-        for (uint32_t i = 0; i < num_groups; i++) {
+    DEBUG("Tox", "irc_join_channel:%s i:%d", settings.default_channel, 0);
+    irc_join_channel(irc, settings.default_channel, 0);
 
-            irc_join_channel(irc, settings.default_channel, groups[i]);
-        }
-    }
-
-
-    uint8_t *friend_id = hex_string_to_bin("ED6E87FA59B0DDCFC50436160319805BFBCF07D64D9519893777109EEA2FFC071FC644A55C1C");
-    uint32_t f_num = tox_friend_add(tox, (const uint8_t *) friend_id, (const uint8_t *) self_nick, nick_len, NULL);
-	free(friend_id);
-
+    DEBUG("Tox", "iterate");
+    tox_iterate(tox, irc);
+    usleep(tox_iteration_interval(tox));
+    DEBUG("Tox", "iterate");
+    tox_iterate(tox, irc);
+    usleep(tox_iteration_interval(tox));
+    DEBUG("Tox", "iterate");
+    tox_iterate(tox, irc);
+    usleep(tox_iteration_interval(tox));
 
     while (!exit_bot) {
         irc_loop(irc, tox);

@@ -4,20 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-uint8_t *hex_string_to_bin(const char *hex_string) {
-    size_t   i, len = strlen(hex_string) / 2;
-    uint8_t *ret = (uint8_t *)malloc(len);
-    if (!ret) {
-        return NULL;
+void hex_string_to_bin(const char *hex_string, uint8_t *output) {
+    size_t len = strlen(hex_string) / 2;
+    size_t i = len;
+    if (!output) {
+        return;
     }
 
     const char *pos = hex_string;
 
     for (i = 0; i < len; ++i, pos += 2) {
-        sscanf(pos, "%2hhx", &ret[i]);
+        sscanf(pos, "%2hhx", &output[i]);
     }
-
-    return ret;
 }
 
 off_t get_file_size(char *file) {

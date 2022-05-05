@@ -51,7 +51,8 @@ Tox *tox_init() {
 
 bool tox_connect(Tox *tox) {
     for (int i = 0; nodes[i].ip; i++) {
-        uint8_t *key = hex_string_to_bin(nodes[i].key);
+        uint8_t *key = (uint8_t *)calloc(1, 100);
+        hex_string_to_bin(nodes[i].key, key);
         if (!key) {
             DEBUG("Tox", "Could not allocate memory for key.");
             return false; // Return because it will most likely fail again
@@ -99,7 +100,8 @@ bool tox_is_friend_master(Tox *tox, uint32_t fid) {
         return false;
     }
 
-    uint8_t *key = hex_string_to_bin(settings.master);
+    uint8_t *key = (uint8_t *)calloc(1, 100);
+    hex_string_to_bin(settings.master, key);
     if (!key) {
         return false;
     }

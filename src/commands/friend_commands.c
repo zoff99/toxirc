@@ -14,13 +14,13 @@
 #include "../save.h"
 
 //static bool command_invite(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
+// static bool command_join(Tox *tox, IRC *irc, uint32_t index, char *arg);
 //static bool command_leave(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_list(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_id(Tox *tox, IRC *irc, uint32_t index, char *arg);
+// static bool command_id(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_info(Tox *tox, IRC *irc, uint32_t index, char *arg);
 //static bool command_la(Tox *tox, IRC *irc, uint32_t index, char *arg);
-static bool command_name(Tox *tox, IRC *irc, uint32_t index, char *arg);
+//static bool command_name(Tox *tox, IRC *irc, uint32_t index, char *arg);
 //static bool command_default(Tox *tox, IRC *irc, uint32_t index, char *arg);
 //static bool command_master(Tox *tox, IRC *irc, uint32_t index, char *arg);
 static bool command_help(Tox *tox, IRC *irc, uint32_t index, char *arg);
@@ -30,13 +30,13 @@ static bool command_warn(Tox *tox, IRC *irc, uint32_t fid, char *arg);
 // clang-format off
 struct Command friend_commands[MAX_CMDS] = {
     //{ "invite",  "invite #channelname to get invited to a channel the bot has joined.",   false, command_invite  },
-    { "join",    "join #channelname to join a specific channel.",                         false, command_join    },
+    // { "join",    "join #channelname to join a specific channel.",                         false, command_join    },
     //{ "leave",   "leave #channelname to leave a specific channel.",                       true,  command_leave   },
     { "list",    "Shows all channels the bot has joined.",                                false, command_list    },
-    { "id",      "Displays this bot's tox ID.",                                           false, command_id      },
+    // { "id",      "Displays this bot's tox ID.",                                           false, command_id      },
     { "info",    "Shows additional info about this bot.",                                 false, command_info    },
     //{ "la",      "Forces this bot to leave all channels",                                 true,  command_la      },
-    { "name",    "Set this bot's name",                                                   true,  command_name    },
+    // { "name",    "Set this bot's name",                                                   true,  command_name    },
     //{ "default", "default #channelname sets the default channel for invite.",             true,  command_default },
     //{ "master",  "Add a ToxID to set the bot's owner.",                                   true,  command_master  },
     { "warn",    "Warn all channels and groupchats the bot is going down.",               true,  command_warn    },
@@ -46,117 +46,7 @@ struct Command friend_commands[MAX_CMDS] = {
 };
 // clang-format on
 
-static bool command_invite(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
-    uint32_t index;
 
-    if (!arg) {
-        index = irc_get_channel_index(irc, settings.default_channel);
-    } else {
-        index = irc_get_channel_index(irc, arg);
-    }
-
-    if (index == UINT32_MAX || !irc->channels[index].in_channel) {
-        return false;
-    }
-
-    tox_conference_invite(tox, fid, irc->channels[index].group_num, NULL);
-
-    return true;
-}
-
-static bool command_join(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
-    /* if (!arg) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"An argument is required.",
-                                sizeof("An argument is required.") - 1, NULL);
-        return false;
-    }
-
-    if ((irc->num_channels + 1) >= settings.channel_limit) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"Channel Limit reached.",
-                                sizeof("Channel limit reached.") - 1, NULL);
-        return false;
-    }
-
-    if (strlen(arg) > IRC_MAX_CHANNEL_LENGTH) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"IRC channel name is too long",
-                                sizeof("IRC channel name is too long") - 1, NULL);
-        return false;
-    }
-
-    uint32_t index = irc_get_channel_index(irc, arg);
-    if (index != UINT32_MAX) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"I am already in that channel.",
-                                sizeof("I am already in that channel.") - 1, NULL);
-        return false;
-    } */
-
-    uint32_t num_groups = tox_group_get_number_groups(tox);
-
-    uint32_t groups[num_groups];
-
-    for (uint32_t i = 0; i < num_groups; i++) {
-            tox_group_leave(tox, groups[i], (const uint8_t *) " ", 1, NULL);
-        }
-
-    size_t nick_len = tox_self_get_name_size(tox);
-    char self_nick[TOX_MAX_NAME_LENGTH + 1];
-    tox_self_get_name(tox, (uint8_t *) self_nick);
-    self_nick[nick_len] = '\0'; 
-
-    uint8_t *id_bin = hex_string_to_bin("4EACCA789FE78054E7EF28D6866771819D0849E6B9BEC4253E876903A4868236");
-    uint32_t group_num = tox_group_join(tox, (const uint8_t *) id_bin, (const uint8_t *) self_nick, nick_len, NULL, 0, NULL);
-    if (group_num == UINT32_MAX) {
-        DEBUG("main", "Could not create groupchat for default group.");
-    }
-    free(id_bin);
-
-    irc_join_channel(irc, settings.default_channel, group_num);
-    tox_group_invite_friend(tox, group_num, fid, NULL);
-    
-/* 
-    TOX_ERR_CONFERENCE_NEW err;
-    uint32_t               group_num = tox_conference_new(tox, &err);
-    if (group_num == UINT32_MAX) {
-        DEBUG("Tox", "Could not create groupchat. Error number: %d", err);
-        return false;
-    }
-
-    irc_join_channel(irc, arg, group_num);
-
-    tox_conference_set_title(tox, group_num, (uint8_t *)arg, strlen(arg), NULL);
-    tox_conference_invite(tox, fid, group_num, NULL);
-    */
-    
-
-    save_write(tox, SAVE_FILE);
-
-    return true;
-}
-
-static bool command_leave(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
-    if (!tox_is_friend_master(tox, fid)) {
-        return false;
-    }
-
-    if (!arg) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"An argument is required.",
-                                sizeof("An argument is required.") - 1, NULL);
-        return false;
-    }
-
-    uint32_t index = irc_get_channel_index(irc, arg);
-    if (index == UINT32_MAX) {
-        DEBUG("Commands", "Could not get irc channel index for: %s.", arg);
-        return false;
-    }
-
-    tox_conference_delete(tox, irc->channels[index].group_num, NULL);
-    irc_leave_channel(irc, index);
-
-    save_write(tox, SAVE_FILE);
-
-    return true;
-}
 
 static bool command_list(Tox *tox, IRC *irc, uint32_t fid, char *UNUSED(arg)) {
     if (irc->num_channels == 0) {
@@ -175,17 +65,6 @@ static bool command_list(Tox *tox, IRC *irc, uint32_t fid, char *UNUSED(arg)) {
     return true;
 }
 
-static bool command_id(Tox *tox, IRC *UNUSED(irc), uint32_t fid, char *UNUSED(arg)) {
-    uint8_t public_key_bin[TOX_ADDRESS_SIZE];
-    char    public_key_str[TOX_ADDRESS_SIZE * 2];
-
-    tox_self_get_address(tox, public_key_bin);
-    to_hex(public_key_str, public_key_bin, TOX_ADDRESS_SIZE);
-
-    tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)public_key_str, TOX_ADDRESS_SIZE * 2, NULL);
-
-    return true;
-}
 
 static bool command_help(Tox *tox, IRC *UNUSED(irc), uint32_t fid, char *UNUSED(arg)) {
     for (int i = 0; friend_commands[i].cmd; i++) {
@@ -222,43 +101,6 @@ static bool command_info(Tox *tox, IRC *UNUSED(irc), uint32_t fid, char *UNUSED(
     return true;
 }
 
-static bool command_la(Tox *tox, IRC *irc, uint32_t fid, char *UNUSED(arg)) {
-    if (!tox_is_friend_master(tox, fid)) {
-        return false;
-    }
-
-    for (uint32_t i = 0; i < irc->num_channels; i++) {
-        tox_conference_delete(tox, irc->channels[i].group_num, NULL);
-    }
-
-    irc_leave_all_channels(irc);
-
-    save_write(tox, SAVE_FILE);
-
-    return true;
-}
-
-static bool command_name(Tox *tox, IRC *UNUSED(irc), uint32_t fid, char *arg) {
-    if (!tox_is_friend_master(tox, fid)) {
-        return false;
-    }
-
-    if (!arg) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"An argument is required.",
-                                sizeof("An argument is required.") - 1, NULL);
-        return false;
-    }
-
-    strcpy(settings.name, arg);
-
-    tox_self_set_name(tox, (const uint8_t *)arg, strlen(arg), NULL);
-
-    save_write(tox, SAVE_FILE);
-    settings_save(SETTINGS_FILE);
-
-    return true;
-}
-
 static bool command_default(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
     if (!tox_is_friend_master(tox, fid)) {
         return false;
@@ -277,24 +119,6 @@ static bool command_default(Tox *tox, IRC *irc, uint32_t fid, char *arg) {
     }
 
     strcpy(settings.default_channel, arg);
-
-    settings_save(SETTINGS_FILE);
-
-    return true;
-}
-
-static bool command_master(Tox *tox, IRC *UNUSED(irc), uint32_t fid, char *arg) {
-    if (!tox_is_friend_master(tox, fid)) {
-        return false;
-    }
-
-    if (!arg) {
-        tox_friend_send_message(tox, fid, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)"An argument is required.",
-                                sizeof("An argument is required.") - 1, NULL);
-        return false;
-    }
-
-    strcpy(settings.master, arg);
 
     settings_save(SETTINGS_FILE);
 

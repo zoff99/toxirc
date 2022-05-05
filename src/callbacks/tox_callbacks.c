@@ -96,11 +96,11 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
         size_t arg_length;
         char * arg = command_parse_arg(msg, length, cmd_length, &arg_length);
 
-        bool valid = false;
+        // bool valid = false;
         for (int i = 0; group_commands[i].cmd; i++) {
             if (strncmp(cmd, group_commands[i].cmd, strlen(group_commands[i].cmd)) == 0) {
                 group_commands[i].func(tox, irc, groupnumber, NULL);
-                valid = true;
+                // valid = true;
             }
         }
 
@@ -127,10 +127,10 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
     }
 
     uint8_t                       name[TOX_MAX_NAME_LENGTH];
-    TOX_ERR_CONFERENCE_PEER_QUERY err;
+    Tox_Err_Group_Peer_Query err;
     int                           name_len = tox_group_peer_get_name_size(tox, groupnumber, peer_number, &err);
 
-    if (name_len == 0 || err != TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+    if (name_len == 0 || err != TOX_ERR_GROUP_PEER_QUERY_OK) {
         memcpy(name, "unknown", 7);
         name_len = 7;
     } else {
@@ -199,17 +199,41 @@ static void friend_request_callback(Tox *tox, const uint8_t *public_key, const u
 }
 
 static void self_connection_change_callback(Tox *tox, TOX_CONNECTION status, void *UNUSED(userdata)) {
+
+    tox;
+
     switch (status) {
         case TOX_CONNECTION_NONE:
             DEBUG("Tox", "Lost connection to the Tox network.");
+            // printf("Lost connection to the Tox network\n");
             break;
         case TOX_CONNECTION_TCP:
             DEBUG("Tox", "Connected using TCP.");
+            // printf("Connected using TCP\n");
             break;
         case TOX_CONNECTION_UDP:
             DEBUG("Tox", "Connected using UDP.");
+            // printf("Connected using UDP\n");
             break;
     }
+}
+
+static void group_invite_cb(Tox *tox, uint32_t friend_number, const uint8_t *invite_data, size_t length,
+                                 const uint8_t *group_name, size_t group_name_length, void *user_data)
+{
+    size_t nick_len = tox_self_get_name_size(tox);
+    char self_nick[TOX_MAX_NAME_LENGTH + 1];
+    tox_self_get_name(tox, (uint8_t *) self_nick);
+    self_nick[nick_len] = '\0'; 
+
+    Tox_Err_Group_Invite_Accept error;
+    tox_group_invite_accept(tox, friend_number, invite_data, length,
+                                 self_nick, nick_len, NULL, 0,
+                                 &error);
+
+    DEBUG("Tox", "tox_group_invite_accept:%d", error);
+
+    save_write(tox, SAVE_FILE);
 }
 
 void tox_callbacks_setup(Tox *tox) {
@@ -217,4 +241,5 @@ void tox_callbacks_setup(Tox *tox) {
     tox_callback_friend_message(tox, &friend_message_callback);
     tox_callback_friend_request(tox, &friend_request_callback);
     tox_callback_group_message(tox, &group_message_callback);
+    tox_callback_group_invite(tox, group_invite_cb);
 }

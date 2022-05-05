@@ -6,6 +6,7 @@
 #include "../macros.h"
 #include "../settings.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 

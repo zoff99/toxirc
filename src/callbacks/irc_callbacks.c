@@ -20,17 +20,20 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
 
     irc_message *message = irc_parse_message(buffer);
     if (!message) {
-        //DEBUG("IRC Callbacks", "Could not parse message");
+        // DEBUG("IRC Callbacks", "Could not parse message");
         return;
     }
 
 
     if (message->type == IRC_MESSGAE_PRIVMSG) {
+        // DEBUG("IRC Callbacks", "IRC_MESSGAE_PRIVMSG:1");
         char *nosync_prefix = settings_get_prefix(CHAR_NO_SYNC_PREFIX);
         if (command_prefix_cmp(message->message, nosync_prefix)) { // dont sync messages that begin with ~
             free(message);
             return;
         }
+
+        // DEBUG("IRC Callbacks", "IRC_MESSGAE_PRIVMSG:2");
 
         if( (strstr(message->channel, irc->nick) != NULL)
             && (strstr(message->nick, "alis") == NULL)
@@ -41,15 +44,9 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             && (strstr(message->nick, "ProjectServ") == NULL)
             && (strstr(message->nick, "SaslServ") == NULL)
             && (strstr(message->nick, "CatServ") == NULL)
-            ) {
-                /*
-            char nbuffer[176];
-            snprintf(nbuffer, sizeof(nbuffer), "This is my personal Tox to IRC bridge. Please do email(irc@plastiras.org) or add me on Tox instead: F0AA7C8C55552E8593B2B77AC6FCA598A40D1F5F52A26C2322690A4BF1DFCB0DD8AEDD2822FF");
-
-            irc_send_message(irc, message->nick, nbuffer);
-
-            DEBUG("IRC Direct Message", "Replying to: %s", message->nick);
-            */
+            )
+        {
+            // DEBUG("IRC Callbacks", "message->nick:%s", message->nick);
         }
 
         char *cmd_prefix = settings_get_prefix(CHAR_CMD_PREFIX);
@@ -83,8 +80,11 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
             return; // dont sync commands
         }
         
+        // DEBUG("IRC Callbacks", "IRC_MESSGAE_PRIVMSG:3");
 
         uint32_t group = irc_get_channel_group(irc, message->channel);
+
+        DEBUG("IRC Callbacks", "group=%d", group);
         if (group == UINT32_MAX) {
             free(message);
             return;

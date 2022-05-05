@@ -112,7 +112,7 @@ bool irc_reconnect(IRC *irc) {
 
 bool irc_join_channel(IRC *irc, char *channel, uint32_t group_num) {
     if (group_num >= irc->size_channels) {
-        DEBUG("IRC", "Reallocating from %d to %d", irc->size_channels, group_num + 1);
+        DEBUG("IRC", "Reallocating from %d to %d", irc->size_channels, group_num);
         void *temp = realloc(irc->channels, sizeof(Channel) * (group_num + 1));
         if (!temp) {
             DEBUG("IRC", "Could not reallocate memory from %d to %d.", irc->size_channels, group_num);
@@ -232,13 +232,15 @@ uint32_t irc_get_channel_index(const IRC *irc, const char *channel) {
 }
 
 uint32_t irc_get_channel_group(const IRC *irc, const char *channel) {
+    uint32_t res = UINT32_MAX;
+
     for (uint32_t i = 0; i < irc->num_channels; i++) {
         if (strcmp(channel, irc->channels[i].name) == 0) {
-            return i;
+            res = i;
         }
     }
 
-    return UINT32_MAX;
+    return res;
 }
 
 char *irc_get_channel_by_group(const IRC *irc, uint32_t group_num) {
@@ -280,7 +282,8 @@ void irc_loop(IRC *irc, void *userdata) {
         #else
             uint8_t data[count + 1];
         #endif
-        
+
+        memset(data, 0, count);
         data[count] = 0;
 
         #ifdef _WIN32
@@ -289,7 +292,7 @@ void irc_loop(IRC *irc, void *userdata) {
             recv(irc->sock, data, count, MSG_NOSIGNAL);
         #endif
 
-        //printf("%s", data);
+        // printf("%s", data);
 
         if (strncmp((char *)data, "PING", 4) == 0) {
             data[1] = 'O';
@@ -344,16 +347,20 @@ void irc_loop(IRC *irc, void *userdata) {
 }
 
 irc_message *irc_parse_message(char *buffer) {
-    irc_message *message = malloc(sizeof(irc_message));
+    irc_message *message = calloc(1, sizeof(irc_message) + 1);
     if (!message) {
         return NULL;
     }
 
-    memset(message, 0, sizeof(irc_message));
+    // DEBUG("IRC", "message:%s", buffer);
 
     char user[IRC_MAX_NICK_LENGTH];
+    memset(user, 0, IRC_MAX_NICK_LENGTH);
     int  matches = sscanf(buffer, ":%31[^!]!%31[^@]@%99s PRIVMSG %49s :%511[^\r\n]", message->nick, user,
                          message->server, message->channel, message->message);
+
+    // DEBUG("IRC", "matches:%d m=%s nick=%s user=%s", matches, message->message, message->nick, user);
+
     if (matches == 5) {
         message->type = IRC_MESSGAE_PRIVMSG;
     } else {

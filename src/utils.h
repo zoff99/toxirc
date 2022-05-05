@@ -9,7 +9,7 @@
  * returns the binary string on success
  * returns NULL on failure
  */
-uint8_t *hex_string_to_bin(const char *hex_string);
+void hex_string_to_bin(const char *hex_string, uint8_t* output);
 
 /*
  * Gets the specified file's size
