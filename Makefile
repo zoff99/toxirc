@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=gnu99 $(shell pkg-config --cflags libtoxcore) -g -O0 -fstack-protector-all -fPIC -Wno-unused-function -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-unused-value
+CFLAGS = -Wall -Wextra -std=gnu99 $(shell pkg-config --cflags libtoxcore) -g -O3 -fstack-protector-all -fPIC -Wno-unused-function -Wno-unused-variable -Wno-unused-function -Wno-unused-parameter -Wno-unused-value
 
-LDFLAGS = $(shell pkg-config --libs libtoxcore) -g -O0 -fstack-protector-all -fPIC
+LDFLAGS = $(shell pkg-config --libs libtoxcore) -g -O3 -fstack-protector-all -fPIC
 
 SRC = $(wildcard src/*.c ) $(wildcard src/*/*.c) third-party/minini/dev/minIni.c
 OBJ = $(SRC:.c=.o)
