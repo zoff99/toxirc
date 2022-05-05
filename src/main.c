@@ -81,6 +81,9 @@ int main(void) {
         }
 */
 
+    uint32_t num_groups = tox_group_get_number_groups(tox);
+    DEBUG("Tox", "tox num_groups:%d", num_groups);
+
     DEBUG("Tox", "irc_join_channel:%s i:%d", settings.default_channel, 0);
     irc_join_channel(irc, settings.default_channel, 0);
 
