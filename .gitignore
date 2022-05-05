@@ -1,25 +1,25 @@
--# Object files
--*.o
--
--# Libraries
--*.a
--*.la
--*.lo
--
--# Executables
--toxirc
--
--# Tox save file
--*.tox
--
--# Settings
--settings.ini
--
--# Editors
--GTAGS
--GPATH
--GRTAGS
--*~
--*.swp
+# Object files
+*.o
+
+# Libraries
+*.a
+*.la
+*.lo
+
+# Executables
+toxirc
+
+# Tox save file
+*.tox
+
+# Settings
 settings.ini
+
+# Editors
+GTAGS
+GPATH
+GRTAGS
+*~
+*.swp
+
 .localrun
