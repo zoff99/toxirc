@@ -190,12 +190,12 @@ static void friend_request_callback(Tox *tox, const uint8_t *public_key, const u
     TOX_ERR_FRIEND_ADD err;
     tox_friend_add_norequest(tox, public_key, &err);
 
+    save_write(tox, SAVE_FILE);
+
     if (err != TOX_ERR_FRIEND_ADD_OK) {
         DEBUG("Tox", "Error accepting friend request. Error number: %d", err);
         return;
     }
-
-    save_write(tox, SAVE_FILE);
 }
 
 static void self_connection_change_callback(Tox *tox, TOX_CONNECTION status, void *UNUSED(userdata)) {
@@ -228,7 +228,7 @@ static void group_invite_cb(Tox *tox, uint32_t friend_number, const uint8_t *inv
 
     Tox_Err_Group_Invite_Accept error;
     tox_group_invite_accept(tox, friend_number, invite_data, length,
-                                 self_nick, nick_len, NULL, 0,
+                                 (const uint8_t *)self_nick, nick_len, NULL, 0,
                                  &error);
 
     DEBUG("Tox", "tox_group_invite_accept:%d", error);
@@ -236,10 +236,27 @@ static void group_invite_cb(Tox *tox, uint32_t friend_number, const uint8_t *inv
     save_write(tox, SAVE_FILE);
 }
 
+static void friend_connection_status_callback(Tox *tox, uint32_t friend_number, Tox_Connection connection_status,
+        void *user_data)
+{
+    switch (connection_status) {
+        case TOX_CONNECTION_NONE:
+            DEBUG("Tox", "Lost connection to the friend #%d.", friend_number);
+            break;
+        case TOX_CONNECTION_TCP:
+            DEBUG("Tox", "Connected the friend #%d using TCP.", friend_number);
+            break;
+        case TOX_CONNECTION_UDP:
+            DEBUG("Tox", "Connected the friend #%d using UDP.", friend_number);
+            break;
+    }
+}
+
 void tox_callbacks_setup(Tox *tox) {
-    tox_callback_self_connection_status(tox, &self_connection_change_callback);
-    tox_callback_friend_message(tox, &friend_message_callback);
-    tox_callback_friend_request(tox, &friend_request_callback);
-    tox_callback_group_message(tox, &group_message_callback);
+    tox_callback_self_connection_status(tox, self_connection_change_callback);
+    tox_callback_friend_connection_status(tox, friend_connection_status_callback);
+    tox_callback_friend_message(tox, friend_message_callback);
+    tox_callback_friend_request(tox, friend_request_callback);
+    tox_callback_group_message(tox, group_message_callback);
     tox_callback_group_invite(tox, group_invite_cb);
 }
