@@ -81,6 +81,9 @@ int main(void) {
         }
 */
 
+    uint32_t num_friends = tox_self_get_friend_list_size(tox);
+    DEBUG("Tox", "tox num_friends:%d", num_friends);
+
     uint32_t num_groups = tox_group_get_number_groups(tox);
     DEBUG("Tox", "tox num_groups:%d", num_groups);
 
