@@ -84,7 +84,7 @@ static void message_callback(IRC *irc, char *buffer, void *arg) {
 
         uint32_t group = irc_get_channel_group(irc, message->channel);
 
-        DEBUG("IRC Callbacks", "group=%d", group);
+        // DEBUG("IRC Callbacks", "group=%d", group);
         if (group == UINT32_MAX) {
             free(message);
             return;
