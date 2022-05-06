@@ -35,6 +35,9 @@ static void signal_catch(int UNUSED(sig)) {
 int main(void) {
     signal(SIGINT, signal_catch);
 
+    setvbuf(stdout, NULL, _IOLBF, 0);
+    setvbuf(stderr, NULL, _IOLBF, 0);
+
     if (!settings_load(SETTINGS_FILE)) {
         DEBUG("WARNING", "Settings could not be loaded, default settings will be used.");
     }
