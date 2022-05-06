@@ -41,7 +41,9 @@ bool save_write(Tox *tox, char *path) {
     return true;
 }
 
-void log_callback(Tox *tox, TOX_LOG_LEVEL level, const char *file, uint32_t line, const char *func, const char *message){
+void log_callback(Tox *tox, Tox_Log_Level level, const char *file, uint32_t line, const char *func,
+                        const char *message, void *user_data)
+{
 
     printf("TOX %u %s:%u(%s) %s\n", level, file, line, func, message);
 }
@@ -56,7 +58,7 @@ Tox *save_load(char *path, int *status) {
     tox_options_set_ipv6_enabled(&options, settings.ipv6);
     tox_options_set_local_discovery_enabled(&options, false);
     tox_options_set_udp_enabled(&options, false);
-    tox_options_set_log_callback(&options, &log_callback);
+    tox_options_set_log_callback(&options, log_callback);
 
     #ifdef _WIN32
         FILE *fp = fopen(path, "rb");
