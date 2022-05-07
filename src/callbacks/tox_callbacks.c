@@ -254,7 +254,7 @@ static void friend_connection_status_callback(Tox *tox, uint32_t friend_number, 
 
 static void group_peer_join_cb(Tox *tox, uint32_t group_number, uint32_t peer_id, void *user_data)
 {
-    DEBUG("Tox", "Peer %d joined the group %d", peer_id, group_number);
+    DEBUG("Tox", "Peer %d joined group %d", peer_id, group_number);
 }
 
 static void group_peer_exit_cb(Tox *tox, uint32_t group_number, uint32_t peer_id, Tox_Group_Exit_Type exit_type,
@@ -262,34 +262,34 @@ static void group_peer_exit_cb(Tox *tox, uint32_t group_number, uint32_t peer_id
 {
     switch (exit_type) {
         case TOX_GROUP_EXIT_TYPE_QUIT:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_QUIT", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_QUIT", peer_id, group_number, exit_type);
             break;
         case TOX_GROUP_EXIT_TYPE_TIMEOUT:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_TIMEOUT", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_TIMEOUT", peer_id, group_number, exit_type);
             break;
         case TOX_GROUP_EXIT_TYPE_DISCONNECTED:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_DISCONNECTED", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_DISCONNECTED", peer_id, group_number, exit_type);
             break;
         case TOX_GROUP_EXIT_TYPE_SELF_DISCONNECTED:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_SELF_DISCONNECTED", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_SELF_DISCONNECTED", peer_id, group_number, exit_type);
             break;
         case TOX_GROUP_EXIT_TYPE_KICK:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_KICK", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_KICK", peer_id, group_number, exit_type);
             break;
         case TOX_GROUP_EXIT_TYPE_SYNC_ERROR:
-        DEBUG("Tox", "Peer %d left the group %d reason: %d TOX_GROUP_EXIT_TYPE_SYNC_ERROR", peer_id, group_number, exit_type);
+        DEBUG("Tox", "Peer %d left group %d reason: %d TOX_GROUP_EXIT_TYPE_SYNC_ERROR", peer_id, group_number, exit_type);
             break;
     }
 }
 
 static void group_self_join_cb(Tox *tox, uint32_t group_number, void *user_data)
 {
-    DEBUG("Tox", "You joined the group %d", group_number);
+    DEBUG("Tox", "You joined group %d", group_number);
 }
 
 static void group_join_fail_cb(Tox *tox, uint32_t group_number, Tox_Group_Join_Fail fail_type, void *user_data)
 {
-    DEBUG("Tox", "Joining the group %d failed. reason: %d", group_number, fail_type);
+    DEBUG("Tox", "Joining group %d failed. reason: %d", group_number, fail_type);
 }
 
 void tox_callbacks_setup(Tox *tox) {
