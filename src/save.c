@@ -44,7 +44,7 @@ bool save_write(Tox *tox, char *path) {
 void log_callback(Tox *tox, Tox_Log_Level level, const char *file, uint32_t line, const char *func,
                         const char *message, void *user_data)
 {
-    DEBUG("TOXCORE", "%u %s:%u(%s) %s\n", level, file, line, func, message);
+    DEBUG("TOXCORE", "%u %s:%u(%s) %s", level, file, line, func, message);
 }
 
 
