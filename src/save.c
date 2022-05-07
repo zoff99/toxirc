@@ -13,9 +13,12 @@
 #include <tox/tox.h>
 
 bool save_write(Tox *tox, char *path) {
+    DEBUG("Save", "saving toxsave ...");
+
     FILE *fp = fopen(path, "wb");
     if (!fp) {
         DEBUG("Save", "Can not open: %s", path);
+        DEBUG("Save", "saving toxsave FAILED:001");
         return false;
     }
 
@@ -23,6 +26,7 @@ bool save_write(Tox *tox, char *path) {
     uint8_t *data = calloc(1, size + 1);
     if (!data) {
         DEBUG("Save", "Could not allocate memory for save data.");
+        DEBUG("Save", "saving toxsave FAILED:002");
         return false;
     }
 
@@ -32,12 +36,14 @@ bool save_write(Tox *tox, char *path) {
         DEBUG("Save", "Could not write save data to %s", path);
         free(data);
         fclose(fp);
+        DEBUG("Save", "saving toxsave FAILED:003");
         return false;
     }
 
     free(data);
     fclose(fp);
 
+    DEBUG("Save", "saving toxsave done");
     return true;
 }
 

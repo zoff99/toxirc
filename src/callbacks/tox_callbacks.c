@@ -64,12 +64,6 @@ static void friend_message_callback(Tox *tox, uint32_t fid, TOX_MESSAGE_TYPE typ
 static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer_number, TOX_MESSAGE_TYPE type,
                                    const uint8_t *message, size_t length, void *userdata) {
 
-  /*  if (tox_conference_peer_number_is_ours(tox, groupnumber, peer_number, NULL)) {
-        return;
-    }
-
-    */
-
     IRC *irc = userdata;
 
     char *nosync_prefix = settings_get_prefix(CHAR_NO_SYNC_PREFIX);
@@ -109,19 +103,6 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
             free(arg);
         }
 
-        
-        /*
-        if (!valid) {
-            tox_group_send_message(tox, groupnumber, TOX_MESSAGE_TYPE_NORMAL,
-                                        (uint8_t *)"Invalid command send me help to find out what commands I support",
-                                        sizeof("Invalid command send me help to find out what commands I support") - 1,
-                                        NULL);
-        }
-
-        */
-
-        
-
         return;
         
     }
@@ -138,14 +119,6 @@ static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer
     }
 
     name[name_len] = '\0';
-
-/*
-    char *channel = irc_get_channel_by_group(irc, groupnumber);
-    if (!channel) {
-        DEBUG("Tox", "Could not get channel name, unable to send message for group: %u.", groupnumber);
-        return;
-    }
-*/
 
     int next_character = 0;
     for (unsigned int i = 0; i < length; i++) {

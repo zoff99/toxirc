@@ -67,6 +67,7 @@ int main(void) {
 
     save_write(tox, SAVE_FILE);
 
+    DEBUG("main", "irc_callbacks_setup");
     irc_callbacks_setup(irc);
 
     size_t nick_len = tox_self_get_name_size(tox);
@@ -93,15 +94,23 @@ int main(void) {
         usleep(tox_iteration_interval(tox));
     }
 
+    DEBUG("main", "irc_disconnect");
     irc_disconnect(irc);
+
+    DEBUG("main", "irc_free");
     irc_free(irc);
 
+    DEBUG("main", "saving toxsave ...");
     save_write(tox, SAVE_FILE);
+    DEBUG("main", "saving toxsave done");
+
+    DEBUG("main", "killing tox ...");
     tox_kill(tox);
+    DEBUG("main", "killing tox done");
 
     settings_save(SETTINGS_FILE);
 
-    DEBUG("main", "Shutting down bot...");
+    DEBUG("main", "Shutting down bot ...");
 
     return 0;
 }
