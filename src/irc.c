@@ -244,13 +244,7 @@ uint32_t irc_get_channel_group(const IRC *irc, const char *channel) {
 }
 
 char *irc_get_channel_by_group(const IRC *irc, uint32_t group_num) {
-    for (uint32_t i = 0; i < irc->num_channels; i++) {
-        if (irc->channels[i].group_num == group_num) {
-            return irc->channels[i].name;
-        }
-    }
-
-    return NULL;
+    return settings.default_channel;
 }
 
 bool irc_in_channel(const IRC *irc, const char *channel) {
