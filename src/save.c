@@ -44,7 +44,31 @@ bool save_write(Tox *tox, char *path) {
 void log_callback(Tox *tox, Tox_Log_Level level, const char *file, uint32_t line, const char *func,
                         const char *message, void *user_data)
 {
-    DEBUG("TOXCORE", "%u %s:%u(%s) %s", level, file, line, func, message);
+    char *level_char = "?";
+
+    switch (level) {
+        case 0:
+            level_char[0] = 'E';
+            break;
+
+        case 1:
+            level_char[0] = 'W';
+            break;
+
+        case 2:
+            level_char[0] = 'I';
+            break;
+
+        default:
+            if (level > 2) {
+                level_char[0] = 'D';
+            } else {
+                level_char[0] = '?';
+            }
+            break;
+    }
+
+    DEBUG("TOXCORE", "%s %s:%u(%s) %s", level_char, file, line, func, message);
 }
 
 
