@@ -74,16 +74,6 @@ int main(void) {
     tox_self_get_name(tox, (uint8_t *) self_nick);
     self_nick[nick_len] = '\0'; 
 
-    /*
-    uint32_t num_groups = tox_group_get_number_groups(tox);
-
-    uint32_t groups[num_groups];
-
-    for (uint32_t i = 0; i < num_groups; i++) {
-            tox_group_leave(tox, groups[i], (const uint8_t *) " ", 1, NULL);
-        }
-*/
-
     uint32_t num_friends = tox_self_get_friend_list_size(tox);
     DEBUG("Tox", "tox num_friends:%d", num_friends);
 
@@ -93,12 +83,6 @@ int main(void) {
     DEBUG("Tox", "irc_join_channel:%s i:%d", settings.default_channel, 0);
     irc_join_channel(irc, settings.default_channel, 0);
 
-    DEBUG("Tox", "iterate");
-    tox_iterate(tox, irc);
-    usleep(tox_iteration_interval(tox));
-    DEBUG("Tox", "iterate");
-    tox_iterate(tox, irc);
-    usleep(tox_iteration_interval(tox));
     DEBUG("Tox", "iterate");
     tox_iterate(tox, irc);
     usleep(tox_iteration_interval(tox));
