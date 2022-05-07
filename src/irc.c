@@ -112,7 +112,7 @@ bool irc_reconnect(IRC *irc) {
 
 bool irc_join_channel(IRC *irc, char *channel, uint32_t group_num) {
     if (group_num >= irc->size_channels) {
-        DEBUG("IRC", "Reallocating from %d to %d", irc->size_channels, group_num);
+        DEBUG("IRC", "Reallocating from %d to %d", irc->size_channels, (group_num + 1));
         void *temp = realloc(irc->channels, sizeof(Channel) * (group_num + 1));
         if (!temp) {
             DEBUG("IRC", "Could not reallocate memory from %d to %d.", irc->size_channels, (group_num + 1));
