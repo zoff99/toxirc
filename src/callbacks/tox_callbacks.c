@@ -241,13 +241,13 @@ static void friend_connection_status_callback(Tox *tox, uint32_t friend_number, 
 {
     switch (connection_status) {
         case TOX_CONNECTION_NONE:
-            DEBUG("Tox", "Lost connection to the friend #%d.", friend_number);
+            DEBUG("Tox", "Lost connection to friend #%d.", friend_number);
             break;
         case TOX_CONNECTION_TCP:
-            DEBUG("Tox", "Connected the friend #%d using TCP.", friend_number);
+            DEBUG("Tox", "Connected to friend #%d using TCP.", friend_number);
             break;
         case TOX_CONNECTION_UDP:
-            DEBUG("Tox", "Connected the friend #%d using UDP.", friend_number);
+            DEBUG("Tox", "Connected to friend #%d using UDP.", friend_number);
             break;
     }
 }
