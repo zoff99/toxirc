@@ -44,7 +44,7 @@ Tox *tox_init() {
         save_write(tox, SAVE_FILE);
     }
 
-    DEBUG("Tox", "Finished initialzing tox");
+    DEBUG("Tox", "Finished initialising tox");
 
     return tox;
 }
