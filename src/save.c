@@ -44,7 +44,9 @@ bool save_write(Tox *tox, char *path) {
 void log_callback(Tox *tox, Tox_Log_Level level, const char *file, uint32_t line, const char *func,
                         const char *message, void *user_data)
 {
-    char *level_char = "?";
+    char level_char[2];
+    level_char[0] = '?';
+    level_char[1] = 0;
 
     switch (level) {
         case 0:

@@ -21,7 +21,7 @@ void debug(const char *fmt, ...) {
     const size_t len = 26 + 5 + strlen(fmt) + 2;
     char *buf = calloc(1, len);
     buf[28] = ' ';
-    snprintf(buf, len, "%04d-%02d-%02d %02d:%02d:%02d.%06ld [_] %s", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+    snprintf(buf, len, "%04d-%02d-%02d %02d:%02d:%02d.%06ld %s", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
              tm.tm_hour, tm.tm_min, tm.tm_sec, tv.tv_usec, fmt);
 
     va_list ap;
