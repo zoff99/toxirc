@@ -50,6 +50,9 @@ Tox *tox_init() {
 }
 
 bool tox_connect(Tox *tox) {
+
+    DEBUG("Tox", "bootstrapping ...");
+
     for (int i = 0; nodes[i].ip; i++) {
         uint8_t *key = (uint8_t *)calloc(1, 100);
         hex_string_to_bin(nodes[i].key, key);
@@ -65,7 +68,7 @@ bool tox_connect(Tox *tox) {
         free(key);
     }
 
-    DEBUG("Tox", "Connected to tox network.");
+    DEBUG("Tox", "bootstrapping done.");
 
     return true;
 }
