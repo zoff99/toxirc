@@ -353,6 +353,24 @@ irc_message *irc_parse_message(char *buffer) {
     int  matches = sscanf(buffer, ":%31[^!]!%31[^@]@%99s PRIVMSG %49s :%511[^\r\n]", message->nick, user,
                          message->server, message->channel, message->message);
 
+    char *nick_iterate = message->nick;
+    for (int i=0;i<IRC_MAX_NICK_LENGTH;i++)
+    {
+        if (*nick_iterate == 60) // check for "<"
+        {
+            *nick_iterate = 123; // change to '{'
+        }
+        else if (*nick_iterate == 62) // check for ">"
+        {
+            *nick_iterate = 125; // change to '}'
+        }
+        else if (*nick_iterate == 0) // NULL byte to end string
+        {
+            break;
+        }
+        nick_iterate++;
+    }
+
     // DEBUG("IRC", "matches:%d m=%s nick=%s user=%s", matches, message->message, message->nick, user);
 
     if (matches == 5) {
