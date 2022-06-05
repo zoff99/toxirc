@@ -137,7 +137,7 @@ static bool command_warn(Tox *tox, IRC *irc, uint32_t fid, char *UNUSED(arg)) {
     for (uint32_t i = 0; i < irc->num_channels; i++) {
         irc_send_message(irc, irc->channels[i].name, warning);
         tox_group_send_message(tox, irc->channels[i].group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)warning,
-                                    length, NULL);
+                                    length, NULL, NULL);
     }
 
     return true;

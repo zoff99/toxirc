@@ -43,7 +43,7 @@ static bool command_channel(Tox *tox, IRC *irc, uint32_t group_num, char *UNUSED
     char buffer[TOX_MAX_MESSAGE_LENGTH];
     int  length = snprintf(buffer, sizeof(buffer), "This groupchat is being synced with %s", channel_name);
 
-    tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)buffer, length, NULL);
+    tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)buffer, length, NULL, NULL);
 
     return true;
 }
@@ -64,7 +64,7 @@ static bool command_help(Tox *tox, IRC *UNUSED(irc), uint32_t group_num, char *U
         char   message[TOX_MAX_MESSAGE_LENGTH];
         size_t length =
             snprintf(message, sizeof(message), "%s%s: %s", cmd_prefix, group_commands[i].cmd, group_commands[i].desc);
-        tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)message, length, NULL);
+        tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)message, length, NULL, NULL);
     }
     return true;
 }
@@ -73,7 +73,7 @@ static bool command_characters(Tox *tox, IRC *UNUSED(irc), uint32_t group_num, c
     for (unsigned int i = 0; i < CHAR_MAX; i++) {
         char   message[TOX_MAX_MESSAGE_LENGTH];
         size_t length = sprintf(message, "%s: %s", settings.characters[i].prefix, settings.characters[i].desc);
-        tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)message, length, NULL);
+        tox_group_send_message(tox, group_num, TOX_MESSAGE_TYPE_NORMAL, (const uint8_t *)message, length, NULL, NULL);
     }
 
     return true;

@@ -62,7 +62,7 @@ static void friend_message_callback(Tox *tox, uint32_t fid, TOX_MESSAGE_TYPE typ
 }
 
 static void group_message_callback(Tox *tox, uint32_t groupnumber, uint32_t peer_number, TOX_MESSAGE_TYPE type,
-                                   const uint8_t *message, size_t length, void *userdata) {
+                                   const uint8_t *message, size_t length, uint32_t message_id, void *userdata) {
 
     IRC *irc = userdata;
 
