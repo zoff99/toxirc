@@ -189,6 +189,12 @@ static void self_connection_change_callback(Tox *tox, TOX_CONNECTION status, voi
             // printf("Connected using UDP\n");
             break;
     }
+
+    Tox_Err_Group_Peer_Query error;
+    uint32_t count = tox_group_peer_count(tox, 0, &error);
+    uint32_t offline_count = tox_group_offline_peer_count(tox, 0, &error);
+
+    DEBUG("Tox", "group 0 peercount=%d offline peercount=%d.", count, offline_count);
 }
 
 static void group_invite_cb(Tox *tox, uint32_t friend_number, const uint8_t *invite_data, size_t length,
